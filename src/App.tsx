@@ -1,4 +1,6 @@
 import React from 'react';
+import styled from 'styled-components';
+
 import { Wrapper, GlobalStyles } from './App.styles';
 import Autocomplete from './Autocomplete';
 
@@ -112,10 +114,10 @@ function App() {
               return (
                 <Autocomplete.Item key={option.login} value={option.login}>
                   {(TokenizedValue: React.ElementType) => (
-                    <a href={option.html_url}>
+                    <AutoCompleteLink href={option.html_url} target="_blank" rel="noopener">
                       <img src={option.avatar_url} alt={`${option.login} avatar`} />
                       <TokenizedValue />
-                    </a>
+                    </AutoCompleteLink>
                   )}
                 </Autocomplete.Item>
               )
@@ -126,5 +128,23 @@ function App() {
     </>
   );
 }
+
+const AutoCompleteLink = styled.a`
+  text-decoration: none;
+  color: #222;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+
+  img {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+  }
+
+  &:hover {
+    color: #fff;
+  }
+`
 
 export default App;
