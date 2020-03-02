@@ -110,7 +110,14 @@ function App() {
           {
             autocompleteOptions.map((option) => {
               return (
-                <Autocomplete.Item key={option.login}>{option.login}</Autocomplete.Item>
+                <Autocomplete.Item key={option.login} value={option.login}>
+                  {(TokenizedValue: React.ElementType) => (
+                    <a href={option.html_url}>
+                      <img src={option.avatar_url} alt={`${option.login} avatar`} />
+                      <TokenizedValue />
+                    </a>
+                  )}
+                </Autocomplete.Item>
               )
             })
           }

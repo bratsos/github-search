@@ -12,13 +12,18 @@ interface AutocompleteProps {
 }
 
 interface AutocompleteItemComposition {
-  Item: React.FunctionComponent
+  Item: any
 }
 
-const AutocompleteItem: React.FunctionComponent = ({ children }) => {
+type AutoCompleteItemProps = {
+  children: Function,
+  TokenizedValue: React.ReactNode
+}
+
+const AutocompleteItem: React.ReactNode = ({ children, TokenizedValue }: AutoCompleteItemProps) => {
   return (
     <li>
-      {children}
+      {children(TokenizedValue)}
     </li>
   )
 }
@@ -55,15 +60,17 @@ const Autocomplete: React.FunctionComponent<AutocompleteProps> & AutocompleteIte
               throw new Error('Only valid react elements are allowed in Autocomplete. Check your render method')
             }
 
-            const highlightedWord = child.props.children.replace(
+            const highlightedWord = child.props.value.replace(
               new RegExp(inputValue, 'gi'), (matchedWord: string) => `<b>${matchedWord}</b>`
             )
+
+            const TokenizedValue = () => <span dangerouslySetInnerHTML={{ __html: highlightedWord}} />;
 
             return React.cloneElement(
               child,
               {
                 ...child.props,
-                children: <span dangerouslySetInnerHTML={{ __html: highlightedWord}} />
+                TokenizedValue,
               }
             )
           })
