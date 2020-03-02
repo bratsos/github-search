@@ -17,16 +17,17 @@ interface AutocompleteItemComposition {
 
 type AutoCompleteItemProps = {
   children: Function,
-  TokenizedValue: React.ReactNode
+  TokenizedValue: React.ReactNode,
+  isHighlighted: boolean
 }
 
-const AutocompleteItem: React.ReactNode = ({ children, TokenizedValue }: AutoCompleteItemProps) => {
+const AutocompleteItem: React.ReactNode = React.forwardRef(({ children, TokenizedValue, isHighlighted }: AutoCompleteItemProps, ref: React.Ref<HTMLLIElement>) => {
   return (
-    <li>
-      {children(TokenizedValue)}
+    <li className={isHighlighted ? 'highlight' : ''} ref={ref}>
+      {children(TokenizedValue, isHighlighted)}
     </li>
   )
-}
+})
 
 const Autocomplete: React.FunctionComponent<AutocompleteProps> & AutocompleteItemComposition = ({
   onSelect,
@@ -35,6 +36,60 @@ const Autocomplete: React.FunctionComponent<AutocompleteProps> & AutocompleteIte
   children
 }) => {
   const [inputValue, setInputValue] = React.useState('');
+  const [highlightedItem, setHighlightedItem] = React.useState(0);
+
+  const childrenCount = React.Children.count(children);
+
+  const childrenRefs = React.useMemo(() => Array.from({
+    length: React.Children.count(children)},
+    () => React.createRef()
+  ), [children]);
+
+  const handleKeyDown = React.useCallback((e: KeyboardEvent) => {
+    switch (e.code) {
+      case 'ArrowDown': {
+        if (highlightedItem === childrenCount -1) return;
+
+        const newHighlightedItemIndex = highlightedItem + 1;
+        // @ts-ignore
+        if (childrenRefs[newHighlightedItemIndex].current.scrollIntoView) {
+          // @ts-ignore
+          childrenRefs[newHighlightedItemIndex].current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+        setHighlightedItem(newHighlightedItemIndex);
+        break;
+      }
+      case 'ArrowUp': {
+        if (highlightedItem === 0) return;
+
+        const newHighlightedItemIndex = highlightedItem - 1
+        // @ts-ignore
+        if (childrenRefs[newHighlightedItemIndex].current.scrollIntoView) {
+          // @ts-ignore
+          childrenRefs[newHighlightedItemIndex].current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+        setHighlightedItem(newHighlightedItemIndex);
+        break;
+      }
+      case 'Enter':
+        if (onSelect) onSelect(highlightedItem)
+        break;
+      default:
+        break;
+    }
+  }, [childrenCount, childrenRefs, highlightedItem, onSelect])
+
+  React.useEffect(() => {
+    if (childrenCount === 0) {
+      setHighlightedItem(0);
+      return;
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [children, childrenCount, handleKeyDown])
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -55,7 +110,7 @@ const Autocomplete: React.FunctionComponent<AutocompleteProps> & AutocompleteIte
       </InputWrapper>
       <ul>
         {
-          React.Children.map(children, (child) => {
+          React.Children.map(children, (child, index) => {
             if (!React.isValidElement(child)) {
               throw new Error('Only valid react elements are allowed in Autocomplete. Check your render method')
             }
@@ -70,6 +125,8 @@ const Autocomplete: React.FunctionComponent<AutocompleteProps> & AutocompleteIte
               child,
               {
                 ...child.props,
+                ref: childrenRefs[index],
+                isHighlighted: highlightedItem === index,
                 TokenizedValue,
               }
             )
@@ -111,10 +168,6 @@ const Wrapper = styled.div`
       background: white;
       transition: background .15s, color .15s;
       cursor: pointer;
-
-      &:hover {
-        background: #4DB6AC;
-      }
     }
   }
 `

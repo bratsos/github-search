@@ -107,14 +107,23 @@ function App() {
       <Wrapper>
         <Autocomplete
           placeholder="Type a github username"
+          onSelect={(selectedIndex: number) => window.open(autocompleteOptions[selectedIndex].html_url, '_blank')}
           onSearch={(text: string) => dispatch({ type: 'set_autocomplete_value', payload: text })}
         >
           {
             autocompleteOptions.map((option) => {
               return (
-                <Autocomplete.Item key={option.login} value={option.login}>
-                  {(TokenizedValue: React.ElementType) => (
-                    <AutoCompleteLink href={option.html_url} target="_blank" rel="noopener">
+                <Autocomplete.Item
+                  key={option.login}
+                  value={option.login}
+                >
+                  {(TokenizedValue: React.ElementType, isHighlighted: boolean) => (
+                    <AutoCompleteLink
+                      href={option.html_url}
+                      target="_blank"
+                      rel="noopener"
+                      isHighlighted={isHighlighted}
+                    >
                       <img src={option.avatar_url} alt={`${option.login} avatar`} />
                       <TokenizedValue />
                     </AutoCompleteLink>
@@ -129,21 +138,22 @@ function App() {
   );
 }
 
-const AutoCompleteLink = styled.a`
+interface IAutoCompleteLink {
+  isHighlighted: boolean
+}
+
+const AutoCompleteLink = styled.a<IAutoCompleteLink>`
   text-decoration: none;
-  color: #222;
+  color: ${({ isHighlighted }) => isHighlighted ? '#fff' : '#222'};
   display: flex;
   align-items: center;
   padding: 10px;
+  background: ${({ isHighlighted }) => isHighlighted ? '#4DB6AC' : '#fff'};
 
   img {
     width: 30px;
     height: 30px;
     margin-right: 10px;
-  }
-
-  &:hover {
-    color: #fff;
   }
 `
 
