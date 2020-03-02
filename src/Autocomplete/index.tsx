@@ -19,7 +19,12 @@ const AutocompleteItem: React.FunctionComponent = ({ children }) => {
   )
 }
 
-const Autocomplete: React.FunctionComponent<AutocompleteProps> & AutocompleteItemComposition = ({ onSelect, onSearch, children }) => {
+const Autocomplete: React.FunctionComponent<AutocompleteProps> & AutocompleteItemComposition = ({
+  onSelect,
+  onSearch,
+  placeholder,
+  children
+}) => {
   const [inputValue, setInputValue] = React.useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,6 +38,7 @@ const Autocomplete: React.FunctionComponent<AutocompleteProps> & AutocompleteIte
       <input
         value={inputValue}
         onChange={handleChange}
+        placeholder={placeholder}
         autoFocus
       />
       <ul>

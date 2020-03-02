@@ -104,6 +104,7 @@ function App() {
       <GlobalStyles />
       <Wrapper>
         <Autocomplete
+          placeholder="Type a github username"
           onSearch={(text: string) => dispatch({ type: 'set_autocomplete_value', payload: text })}
         >
           {
