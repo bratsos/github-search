@@ -1,3 +1,8 @@
+Before you launch the application, you need a valid github API key. Once you have it, place it inside `.env.local` file.
+Keep in mind that the variable name should be `REACT_APP_GITHUB_KEY`
+
+`echo "REACT_APP_GITHUB_KEY=<YOUR-API-KEY-HERE>" >> .env.local`
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
