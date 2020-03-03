@@ -4,6 +4,7 @@ import { ReactComponent as LoadingSvg } from './assets/loading.svg';
 
 import { Wrapper, GlobalStyles } from './App.styles';
 import Autocomplete from './Autocomplete';
+import { debounce } from './helpers';
 
 const ACCESS_TOKEN = process.env.REACT_APP_GITHUB_KEY;
 
@@ -60,6 +61,28 @@ const reducer = (state: IState = initialState, { type, payload }: Action): IStat
   }
 }
 
+const debouncedFetch = debounce((query: string, cancel, onSuccess, onFail) => {
+  const queryString = new URLSearchParams({
+    q: query,
+    access_token: ACCESS_TOKEN
+  }).toString();
+
+
+  return fetch(`https://api.github.com/search/users?${queryString}`)
+    .then(response => response.json())
+    .then((response) => {
+      if (cancel) return;
+      
+      onSuccess({
+        type: 'set_results',
+        payload: response.items
+      })
+
+      cancel = true;
+    })
+    .catch(() => onFail())
+})
+
 function App() {
   const [{
     autocompleteValue,
@@ -79,25 +102,8 @@ function App() {
 
     dispatch({ type: 'start_loading' })
 
-    const queryString = new URLSearchParams({
-      q: autocompleteValue,
-      access_token: ACCESS_TOKEN
-    }).toString();
-
-
-    fetch(`https://api.github.com/search/users?${queryString}`)
-        .then(response => response.json())
-        .then((response) => {
-          if (cancel) return;
-          
-          dispatch({
-            type: 'set_results',
-            payload: response.items
-          })
-
-          cancel = true;
-        })
-        .catch(() => resetState())
+    debouncedFetch(autocompleteValue, cancel, dispatch, resetState)
+        
 
     return () => { cancel = true }
   }, [autocompleteValue])
