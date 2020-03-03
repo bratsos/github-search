@@ -1,4 +1,4 @@
-import styled, { createGlobalStyle } from 'styled-components';
+import styled, { createGlobalStyle, keyframes } from 'styled-components';
 
 export const GlobalStyles = createGlobalStyle`
   body {
@@ -38,10 +38,37 @@ export const GlobalStyles = createGlobalStyle`
   }
 `;
 
+const spin = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`
+
 export const Wrapper = styled.main`
   width: 90%;
   max-width: 768px;
   box-shadow: 0px 4px 4px rgba(0,0,0,.25);
   min-height: 90vh;
   background: #fff;
+
+  .loading-wrapper {
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    left: 0px;
+    top: 130px;
+
+    svg {
+      width: 20px;
+      animation: ${spin} linear 1s infinite;
+
+      path {
+        fill: #d81b60;
+      }
+    }
+  }
 `

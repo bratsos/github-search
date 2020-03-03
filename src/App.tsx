@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { ReactComponent as LoadingSvg } from './assets/loading.svg';
 
 import { Wrapper, GlobalStyles } from './App.styles';
 import Autocomplete from './Autocomplete';
@@ -106,6 +107,9 @@ function App() {
       <GlobalStyles />
       <Wrapper>
         <h1 className="logo">GITHUB EXPLORER</h1>
+        {
+          isLoading && <div className="loading-wrapper"><LoadingSvg /></div>
+        }
         <Autocomplete
           placeholder="Type a github username"
           onSelect={(selectedIndex: number) => window.open(autocompleteOptions[selectedIndex].html_url, '_blank')}
