@@ -26,6 +26,16 @@ export const GlobalStyles = createGlobalStyle`
     height: 100vh;
     background: linear-gradient(132deg, rgba(0,172,193,1) 0%, rgba(102,187,106,1) 100%);
   }
+
+  h1 {
+    width: 100%;
+    text-align: center;
+    margin: 40px 0;
+    font-family: monospace;
+    font-weight: 900;
+    font-size: 30px;
+    color: #D81B60;
+  }
 `;
 
 export const Wrapper = styled.main`

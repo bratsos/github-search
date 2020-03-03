@@ -105,6 +105,7 @@ function App() {
     <>
       <GlobalStyles />
       <Wrapper>
+        <h1 className="logo">GITHUB EXPLORER</h1>
         <Autocomplete
           placeholder="Type a github username"
           onSelect={(selectedIndex: number) => window.open(autocompleteOptions[selectedIndex].html_url, '_blank')}
